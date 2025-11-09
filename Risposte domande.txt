@@ -1,0 +1,90 @@
+DOMANDA 1
+
+Incapsulamento
+
+L’incapsulamento consiste nel nascondere i dettagli interni di una classe e nel fornire un’interfaccia pubblica controllata per l’accesso e la modifica dei dati.
+In pratica, i dati vengono resi privati o protetti(con i modificatori di accesso private e protected), mentre i metodi che ne permettono l’utilizzo vengono dichiarati pubblici.
+Questi metodi sono chiamati getters(metodi per leggere un campo) o setters(metodi per impostare il valore di un campo).
+Questo principio serve a proteggere lo stato interno di un oggetto da modifiche e letture non autorizzate (le classi esterne possono modificare e leggere i dati solo nel modo definito da chi ha creato la classe che stanno utilizzando). 
+
+Eccone un esempio in C#:
+
+class Prodotto
+{
+	private string nome;
+
+	public string Nome {get; set;}
+
+	private double prezzo;
+
+	public double Prezzo {
+		get {return prezzo;}
+		set 
+		{
+	    		if(value > 0)
+	    		{
+				prezzo = value;
+	    		}
+	    
+		}
+	}
+}
+
+Nell' esempio precedente, il nome può essere letto e impostato regolarmente, mentre il prezzo può essere letto ma può essere impostato il suo valore solo se questo valore è maggiore di zero. Questo controllo impedisce di avere in memoria prodotti con un prezzo negativo.
+Poiché prezzo e nome hanno modificatore di accesso private, dall' esterno si può interagire con questi due campi solo tramite le rispettive proprietà con modificatore di accesso public.
+
+Prezzo e Nome (che per convenzione sono indicate dal nome del campo con la lettera maiuscola) sono dette proprietà della classe e sono collegate ai campi privati (nome e prezzo).
+
+Polimorfismo
+
+Il polimorfismo è un concetto fondamentale della programmazione. Si applica ai metodi e permette di definire metodi con lo stesso nome ma che si comportano in maniera diversa a seconda del contesto. Esistono due tipi di polimorfismo:
+
+- Overload: Se due metodi, della stessa classe, hanno lo stesso nome ma firma diversa (hanno parametri che sono diversi per numero e/o per tipo), chiamando un metodo con quel nome, si avrà un comportamento diverso a seconda dei parametri che si passano al metodo.
+
+- Override: Consiste nel sovrascrivere i metodi della classe madre nelle classi figlie. Se, nella classe B, che eredita dalla classe A, si dichiara un metodo con la stessa firma di un metodo della classe A, allora, quando verrà quel metodo su un oggetto della classe B, verrà eseguita l' implementazione definita nella classe B e non quella definita nella classe A.
+
+Ecco i vantaggi di overload e override:
+
+Overload(stesso nome, parametri diversi):
+
+- Chiarezza: si può usare lo stesso nome per funzioni simili, invece di inventarne uno nuovo ogni volta.
+- Comodità: gestisci diversi tipi di dati o numeri di parametri con lo stesso metodo.
+- Manutenibilità: il codice è più leggibile e organizzato.
+
+Override (stesso nome di un metodo della classe madre in una classe che eredita dalla classe madre):
+
+- Flessibilità: puoi cambiare il comportamento di un metodo già esistente senza modificare il codice che lo chiama.
+- Riutilizzo: consente di usare metodi generici e specializzarli solo dove serve.
+
+Domanda 2
+
+In C# esistono due approcci principali per interagire con un database: ADO.NET e Entity Framework (EF).
+
+1. ADO.NET
+ADO.NET rappresenta il metodo tradizionale per accedere ai dati. Funziona a basso livello e prevede l’uso diretto di query SQL. L’interazione avviene principalmente attraverso tre classi:
+
+- SqlConnection, che stabilisce la connessione con il database;
+- SqlCommand, che contiene la query SQL da eseguire, come stringa;
+- SqlDataReader o altri metodi di esecuzione, che permettono eseguire la query.
+
+Il flusso tipico è: si apre la connessione, si esegue la query, si leggono i risultati(solo se la query è di lettura) e infine si chiude la connessione.
+Questo metodo offre grande controllo sulle query e sulle performance, ma richiede più codice e una gestione manuale delle connessioni e dei dati. Questo approccio è più complesso da usare rispetto ad utilizzare Entity Framework.
+
+2. Entity Framework
+Entity Framework è un ORM (Object-Relational Mapper) che permette di trattare le tabelle del database come oggetti C#. Si definiscono classi, chiamate model, corrispondenti alle tabelle(ogni proprietà della classe rappresenta una colonna della tabella) del database, e una classe, che eredita da DbContext, che rappresenta il database.
+
+Nel DbContext esistono collections della classe DbSet<T> dove il tipo T(la classe DbSet usa le generics) è la classe model che rappresenta quella tabella del Db. Le query si scrivono con LINQ o metodi C# e EF si occupa di tradurle in SQL automaticamente, agendo su queste collections.
+
+Il flusso tipico è: si crea un’istanza del DbContext, si leggono o modificano i DbSet (con Linq o metodi C#), e si chiama il metodo SaveChanges() per salvare le modifiche nel database. Questo approccio semplifica lo sviluppo.
+
+Mappare un database significa dire ad Entity Framework a quale tabella corrisponde ogni model. Ci sono tre apporcci principali per fare questo:
+
+- Convenzioni (dai ai models e alle tabelle nomi specifici in modo che Entity Framework sa come mappare il database. Per esempio il nome della tabella deve essere uguale al nome della classe model).
+- Data Annotations (utilizzi attributi specifici per indicare a quale tabella corrisponde un model e a quale colonna corrisponde una proprietà).
+- Fluent Api (Nel DbContext devi fare l' ovverride del metodo OnModelCreating passando come parametro un oggetto della classe ModelBuilder. Questo oggetto ha dei metodi per indicare perfettamente ad Entity Framework come mappare il database).
+
+Di questi tre approcci, l' approccio consigliato è usare le fluent api.
+
+Conclusione:
+In sintesi, ADO.NET è indicato quando si desidera il massimo controllo e performance elevate, mentre Entity Framework è preferibile per rapidità nello sviluppo e maggiore leggibilità del codice, grazie all’astrazione fornita dagli oggetti.
+
